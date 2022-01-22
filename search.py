@@ -1,4 +1,14 @@
 # Basic searching algorithms
+def graph(grid):
+    """
+    Returns the graph for a given grid. 
+
+    This function forms the graph based on given grid.
+    At each node, the adjacent nodes are added in [right,down,left,up] order.
+    Nodes are added only if the corresponding node is a space not an obstacle.
+    That means , if node [2,1] is obstacle , it will not be added to the graph. 
+    """
+    
 
 def bfs(grid, start, goal):
     '''Return a path found by BFS alogirhm 
