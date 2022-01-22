@@ -52,8 +52,8 @@ def shortest_path_finder(start,goal,path_track,found):
             path.append(node)
     else:
         path=[]
-    
-    return path.reverse()
+    path.reverse()
+    return path
 
 def bfs(grid, start, goal):
     '''Return a path found by BFS alogirhm 
@@ -112,34 +112,7 @@ def bfs(grid, start, goal):
     
     path=shortest_path_finder(start,goal,path_track,found)
 
-
-    # while not found or  queue:
-    #     item = queue.pop(0)
-    #     # if item == goal:
-    #     #     found = True
-    #     #     steps+=1
-    #     #     break
-    #     for node in graph_nodes[tuple(item)]:
-    #         if node not in visited:
-    #             visited.append(node)
-    #             queue.append(node)
-    #             steps+=1
-    #             if node == goal:
-    #                 found = True
-    #                 break
-
-
-    # path=visited         
-
-    # for item in queue:
-    #     if item not in path and not found:
-    #         path.append(item)
-    #         steps+=1
-    #         for val in graph_nodes[tuple(item)]:
-    #             queue.append(val)
-    #         if item ==goal:
-    #             found = True
-    #             break
+    print(path)
 
     if found:
         print(f"It takes {steps} steps to find a path using BFS")
@@ -172,10 +145,42 @@ def dfs(grid, start, goal):
     [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 3], [3, 3], [3, 2], [3, 1]]
     '''
     ### YOUR CODE HERE ###
+    graph_nodes = graph(grid)
+    
+    queue =[]
+    visited=[]
     path = []
+    path_track={}  # Dictionary to keep track of the path so the shortest path can be constructed later 
     steps = 0
     found = False
 
+    queue.append(start)
+    visited.append(start)
+    while queue or not found:
+        item = queue.pop(0)    # Dequeuing the first element in the queue
+        print(item)
+        if item == goal:
+            found = True
+            break 
+        if item not in visited:
+            visited.append(item)
+        idx=0
+
+        for node in graph_nodes[tuple(item)]:
+            if node not in visited:
+                visited.append(node)
+                queue.insert(idx,node)
+                idx+=1
+                path_track[tuple(node)] = item  # Keeping track of the parents of each node 
+                
+                if node == goal:
+                    found = True
+                    break
+                else:
+                    steps+=1
+    print(visited)
+    path=shortest_path_finder(start,goal,path_track,found)
+    print(path_track)
     if found:
         print(f"It takes {steps} steps to find a path using DFS")
     else:
