@@ -8,7 +8,35 @@ def graph(grid):
     Nodes are added only if the corresponding node is a space not an obstacle.
     That means , if node [2,1] is obstacle , it will not be added to the graph. 
     """
-    
+    def check(row,col,grid):
+        """This function checks if a corresponding element in grid is a space or an obstacle.
+        returns valid nodes in the order [right,down,left,up]
+        """
+        if row+1 in range(0,len(grid)) and grid[row+1][col]==0:
+            up = [row+1,col]
+        else:
+            up = None 
+        if row-1 in range(0,len(grid)) and grid[row-1][col]==0:
+            down = [row-1,col]
+        else:
+            down = None 
+        if col+1 in range(0,len(grid[row])) and grid[row][col+1]==0:
+            right = [row,col+1]
+        else:
+            right = None 
+        if col-1 in range(0,len(grid[row])) and grid[row][col-1]==0:
+            left = [row,col-1]
+        else:
+            left = None 
+        out  = [right,down,left,up]
+        return [i for i in out if i is not None ]
+    nodes ={}
+    for row in range(len(grid)):
+        for col in range(len(grid[row])):
+            
+            nodes[[row,col]] = check(row,col,grid)
+
+    return nodes 
 
 def bfs(grid, start, goal):
     '''Return a path found by BFS alogirhm 
