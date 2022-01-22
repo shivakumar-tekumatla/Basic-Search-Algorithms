@@ -41,6 +41,19 @@ def graph(grid):
                 nodes[(row,col)] = check(row,col,grid)
 
     return nodes 
+def shortest_path_finder(start,goal,path_track,found):
+    """This function returns the shortest path in the explored nodes"""
+    path=[]
+    path.append(goal)
+    node=goal
+    if found:
+        while node!=start:
+            node = path_track[tuple(node)]
+            path.append(node)
+    else:
+        path=[]
+    
+    return path.reverse()
 
 def bfs(grid, start, goal):
     '''Return a path found by BFS alogirhm 
@@ -71,7 +84,7 @@ def bfs(grid, start, goal):
     queue =[]
     visited=[]
     path = []
-    path_track={}
+    path_track={}  # Dictionary to keep track of the path so the shortest path can be constructed later 
     steps = 0
     found = False
 
@@ -94,19 +107,10 @@ def bfs(grid, start, goal):
                     break
                 else:
                     steps+=1
-
-    # BFS exploration is done. Shortest path in BFS should be computed 
-    path.append(goal)
-    node=goal
-    if found:
-        while node!=start:
-            node = path_track[tuple(node)]
-            path.append(node)
-    else:
-        path=[]
     
-    path.reverse()
-
+    # BFS exploration is done. Shortest path in BFS should be computed 
+    
+    path=shortest_path_finder(start,goal,path_track,found)
 
 
     # while not found or  queue:
