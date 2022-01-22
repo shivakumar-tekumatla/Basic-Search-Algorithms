@@ -13,13 +13,13 @@ def graph(grid):
         returns valid nodes in the order [right,down,left,up]
         """
         if row+1 in range(0,len(grid)) and grid[row+1][col]==0:
-            up = [row+1,col]
-        else:
-            up = None 
-        if row-1 in range(0,len(grid)) and grid[row-1][col]==0:
-            down = [row-1,col]
+            down = [row+1,col]
         else:
             down = None 
+        if row-1 in range(0,len(grid)) and grid[row-1][col]==0:
+            up = [row-1,col]
+        else:
+            up = None 
         if col+1 in range(0,len(grid[row])) and grid[row][col+1]==0:
             right = [row,col+1]
         else:
@@ -33,8 +33,8 @@ def graph(grid):
     nodes ={}
     for row in range(len(grid)):
         for col in range(len(grid[row])):
-            
-            nodes[[row,col]] = check(row,col,grid)
+            if grid[row][col]==0:
+                nodes[(row,col)] = check(row,col,grid)
 
     return nodes 
 
@@ -62,6 +62,7 @@ def bfs(grid, start, goal):
     [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]
     '''
     ### YOUR CODE HERE ###
+    
     path = []
     steps = 0
     found = False
