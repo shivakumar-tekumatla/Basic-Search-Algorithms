@@ -1,0 +1,31 @@
+# graph_nodes = graph(grid)
+    
+    # queue =[]
+    # visited=[]
+    # path = []
+    # path_track={}  # Dictionary to keep track of the path so the shortest path can be constructed later 
+    # steps = 0
+    # found = False
+
+    # queue.append(start)
+    # visited.append(start)
+    # steps+=1
+    # while queue and not found:
+    #     item = queue.pop(0)    # Dequeuing the first element in the queue
+   
+    #     if item == goal:
+    #         found = True
+    #         break 
+    #     for node in graph_nodes[tuple(item)]:
+    #         if node not in visited:
+    #             visited.append(node)
+    #             queue.append(node)
+    #             path_track[tuple(node)] = item  # Keeping track of the parents of each node 
+    #             steps+=1
+    #             if node == goal:
+    #                 found = True
+    #                 break
+    
+    # # BFS exploration is done. Shortest path in BFS should be computed 
+    
+    # path=shortest_path_finder(start,goal,path_track,found)
