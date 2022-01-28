@@ -1,7 +1,6 @@
 # Basic searching algorithms
-from operator import truediv
-from xml.dom import NotFoundErr
 
+import sys 
 
 def graph(grid):
     """
@@ -54,6 +53,41 @@ def shortest_path_finder(start,goal,path_track,found):
         path=[]
     path.reverse()
     return path
+def bfs_dfs_search(grid,start,goal,search_method):
+    graph_nodes = graph(grid)
+    
+    queue =[]
+    visited=[]
+    path = []
+    path_track={}  # Dictionary to keep track of the path so the optimal path can be constructed later 
+    steps = 0
+    found = False
+
+    queue.append(start)
+    visited.append(start)
+    steps+=1
+    while queue and not found:
+        item = queue.pop(0)    # Dequeuing the first element in the queue
+   
+        if item == goal:
+            found = True
+            break 
+        idx=0
+        for node in graph_nodes[tuple(item)]:
+            if node not in visited:
+                visited.append(node)
+                if search_method=="bfs":
+                    queue.append(node)
+                else:
+                    queue.insert(idx,node)
+                    idx+=1
+                path_track[tuple(node)] = item  # Keeping track of the parents of each node 
+                steps+=1
+                if node == goal:
+                    found = True
+                    break
+    path=shortest_path_finder(start,goal,path_track,found)
+    return path, steps, found
 
 def bfs(grid, start, goal):
     '''Return a path found by BFS alogirhm 
@@ -90,9 +124,10 @@ def bfs(grid, start, goal):
 
     queue.append(start)
     visited.append(start)
-
-    while queue or not found:
+    steps+=1
+    while queue and not found:
         item = queue.pop(0)    # Dequeuing the first element in the queue
+   
         if item == goal:
             found = True
             break 
@@ -101,18 +136,14 @@ def bfs(grid, start, goal):
                 visited.append(node)
                 queue.append(node)
                 path_track[tuple(node)] = item  # Keeping track of the parents of each node 
-                
+                steps+=1
                 if node == goal:
                     found = True
                     break
-                else:
-                    steps+=1
     
     # BFS exploration is done. Shortest path in BFS should be computed 
     
     path=shortest_path_finder(start,goal,path_track,found)
-
-    print(path)
 
     if found:
         print(f"It takes {steps} steps to find a path using BFS")
@@ -150,37 +181,39 @@ def dfs(grid, start, goal):
     queue =[]
     visited=[]
     path = []
-    path_track={}  # Dictionary to keep track of the path so the shortest path can be constructed later 
     steps = 0
     found = False
+    path_track={}
 
     queue.append(start)
     visited.append(start)
-    while queue or not found:
-        item = queue.pop(0)    # Dequeuing the first element in the queue
-        print(item)
-        if item == goal:
-            found = True
-            break 
-        if item not in visited:
-            visited.append(item)
-        idx=0
+    # while queue and not found:
+    #     item = queue.pop(0)    # Dequeuing the first element in the queue
+    #     # path.append(item)
+    #     # print(item)
+    #     if item == goal:
+    #         found = True
+    #         break 
+    #     if item not in visited:
+    #         visited.append(item)
+    #     idx=0
 
-        for node in graph_nodes[tuple(item)]:
-            if node not in visited:
-                visited.append(node)
-                queue.insert(idx,node)
-                idx+=1
-                path_track[tuple(node)] = item  # Keeping track of the parents of each node 
+    #     for node in graph_nodes[tuple(item)]:
+    #         if node not in visited:
+    #             visited.append(node)
+    #             queue.insert(idx,node)
+    #             path_track[tuple(node)] = item
+    #             idx+=1
                 
-                if node == goal:
-                    found = True
-                    break
-                else:
-                    steps+=1
-    print(visited)
+    #             if node == goal:
+    #                 path.append(goal)
+    #                 found = True
+    #                 break
+    #             else:
+    #                 steps+=1
+
+
     path=shortest_path_finder(start,goal,path_track,found)
-    print(path_track)
     if found:
         print(f"It takes {steps} steps to find a path using DFS")
     else:
@@ -212,9 +245,37 @@ def dijkstra(grid, start, goal):
     [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]
     '''
     ### YOUR CODE HERE ###
+    graph_nodes = graph(grid)
+    
+    queue =[]
+    visited=[]
     path = []
     steps = 0
     found = False
+    inf = sys.maxsize
+    # Forming a cost_grid simialr to grid 
+    # cost_grid=grid.copy()
+    # for row in range(0,len(grid)):
+    #     for col in range(0,len(grid[row])):
+    #         if grid[row][col]==0:
+    #             cost_grid[row][col]=inf
+    #         else:
+    #             cost_grid[row][col]=None 
+    # visited.append(start)
+    # queue.append(start)
+    # cost_grid[start[0]][start[1]]=0
+    # cost=1
+    # while queue and not found:
+    #     item = queue.pop()
+    #     for node in graph_nodes[tuple(item)]:
+    #         cost_grid[node[0]][node[1]] = min([cost_grid[node[0]][node[1]],cost_grid[item[0]][item[1]]])
+    #         if node not in visited:
+    #             queue.append()
+    #         if node == goal:
+    #             found = True
+
+
+    
 
     if found:
         print(f"It takes {steps} steps to find a path using Dijkstra")
