@@ -1,6 +1,8 @@
 # Basic searching algorithms
 
-import sys 
+import sys
+
+from matplotlib.cbook import violin_stats 
 class Node:
     def __init__(self, row, col, is_obs, h):
         self.row = row        # coordinate
@@ -49,7 +51,7 @@ def graph(grid):
                 nodes[(row,col)] = check(row,col,grid)
 
     return nodes 
-    
+
 def shortest_path_finder(start,goal,path_track,found):
     """This function returns the shortest path in the explored nodes"""
     path=[]
@@ -63,6 +65,12 @@ def shortest_path_finder(start,goal,path_track,found):
         path=[]
     path.reverse()
     return path
+
+# def get_parent(nodes,child):
+#     keys = [k for k, v in nodes.items() if child in v]
+#     if keys:
+#         return list(keys[0])
+#     return None
 
 def bfs_dfs_search(grid,start,goal,search_method):
     graph_nodes = graph(grid)
@@ -86,21 +94,26 @@ def bfs_dfs_search(grid,start,goal,search_method):
         if item not in visited:
             visited.append(item)
         idx=0
+        prev_node = item
         for node in graph_nodes[tuple(item)]:
             if node not in visited:
                 visited.append(node)
                 if search_method=="bfs":
                     queue.append(node)
+                    path_track[tuple(node)] = item 
                 else:
                     queue.insert(idx,node)
+                    path_track[tuple(node)] = prev_node
+                    prev_node=node
                     idx+=1
-                path_track[tuple(node)] = item  # Keeping track of the parents of each node 
+                 # Keeping track of the parents of each node 
                 steps+=1
                 if node == goal:
                     found = True
                     break
-
+    print(path_track)
     path=shortest_path_finder(start,goal,path_track,found)
+    
     return path, steps, found
 
 def bfs(grid, start, goal):
@@ -130,6 +143,7 @@ def bfs(grid, start, goal):
     
     search_method = "bfs"
     path,steps,found = bfs_dfs_search(grid,start,goal,search_method)
+    print(path)
     if found:
         print(f"It takes {steps} steps to find a path using BFS")
     else:
@@ -164,8 +178,10 @@ def dfs(grid, start, goal):
     
     search_method = "dfs"
     path,steps,found = bfs_dfs_search(grid,start,goal,search_method)
+    print(path)
+    
     if found:
-        print(f"It takes {steps} steps to find a path using BFS")
+        print(f"It takes {steps} steps to find a path using DFS")
     else:
         print("No path found")
     return path, steps
