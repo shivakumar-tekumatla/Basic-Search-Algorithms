@@ -219,27 +219,41 @@ def dijkstra(grid, start, goal):
     steps = 0
     found = False
     inf = sys.maxsize
-    # Forming a cost_grid simialr to grid 
-    # cost_grid=grid.copy()
-    # for row in range(0,len(grid)):
-    #     for col in range(0,len(grid[row])):
-    #         if grid[row][col]==0:
-    #             cost_grid[row][col]=inf
-    #         else:
-    #             cost_grid[row][col]=None 
-    # visited.append(start)
-    # queue.append(start)
-    # cost_grid[start[0]][start[1]]=0
-    # cost=1
-    # while queue and not found:
-    #     item = queue.pop()
-    #     for node in graph_nodes[tuple(item)]:
-    #         cost_grid[node[0]][node[1]] = min([cost_grid[node[0]][node[1]],cost_grid[item[0]][item[1]]])
-    #         if node not in visited:
-    #             queue.append()
-    #         if node == goal:
-    #             found = True
+    cost_grid ={}
+    path_track = {}
+    cost =1 
 
+    for key in graph_nodes.keys():
+        cost_grid[key]=inf
+    cost_grid[tuple(start)] = 0
+    queue.append(start)
+    visited.append(start)
+    while queue and not found:
+        item = min(zip(cost_grid.values(), cost_grid.keys()))[1]  # finding the node with minimum cost 
+        # cost_grid
+        
+        queue.append(item)
+
+        if item == goal:
+            found = True
+            break 
+        if item not in visited:
+            visited.append(item)
+        for node in graph_nodes[item]:
+            if node not in visited:
+                if cost_grid[tuple(node)]> cost_grid[item]+cost :
+                    cost_grid[tuple(node)]= cost_grid[item]+cost 
+            
+                visited.append(node)
+                queue.append(node)
+                path_track[tuple(node)] = list(item) 
+            if node == goal:
+                found = True
+                break 
+        del cost_grid[item]
+
+
+    path=shortest_path_finder(start,goal,path_track,found)
 
     
 
