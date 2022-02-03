@@ -52,6 +52,12 @@ def graph(grid):
 
     return nodes 
 
+def heuristic(node,goal):
+    x_node,y_node = node 
+    x_goal,y_goal = goal
+    return abs(x_goal-x_node)+abs(y_goal-y_node)
+
+
 def shortest_path_finder(start,goal,path_track,found):
     """This function returns the shortest path in the explored nodes"""
     path=[]
@@ -228,6 +234,7 @@ def dijkstra(grid, start, goal):
     cost_grid[tuple(start)] = 0
     queue.append(start)
     visited.append(start)
+    steps+=1
     while queue and not found:
         item = min(zip(cost_grid.values(), cost_grid.keys()))[1]  # finding the node with minimum cost 
         # cost_grid
@@ -247,6 +254,7 @@ def dijkstra(grid, start, goal):
                 visited.append(node)
                 queue.append(node)
                 path_track[tuple(node)] = list(item) 
+                steps+=1
             if node == goal:
                 found = True
                 break 
@@ -254,7 +262,7 @@ def dijkstra(grid, start, goal):
 
 
     path=shortest_path_finder(start,goal,path_track,found)
-
+    print(path)
     
 
     if found:
@@ -288,9 +296,53 @@ def astar(grid, start, goal):
     [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]
     '''
     ### YOUR CODE HERE ###
+    graph_nodes = graph(grid)
+    
+    queue =[]
+    visited=[]
     path = []
     steps = 0
     found = False
+    inf = sys.maxsize
+    cost_grid ={}
+    path_track = {}
+    cost =1 
+
+    for key in graph_nodes.keys():
+        cost_grid[key]=inf
+    cost_grid[tuple(start)] = 0
+    queue.append(start)
+    visited.append(start)
+    steps+=1
+    while queue and not found:
+        item = min(zip(cost_grid.values(), cost_grid.keys()))[1]  # finding the node with minimum cost 
+        # cost_grid
+        
+        queue.append(item)
+
+        if item == goal:
+            found = True
+            break 
+        if item not in visited:
+            visited.append(item)
+        for node in graph_nodes[item]:
+            if node not in visited:
+                if cost_grid[tuple(node)]> cost_grid[item]+cost :
+                    cost_grid[tuple(node)]= cost_grid[item]+cost 
+            
+                visited.append(node)
+                queue.append(node)
+                path_track[tuple(node)] = list(item) 
+                steps+=1
+            if node == goal:
+                found = True
+                break 
+        del cost_grid[item]
+
+
+    path=shortest_path_finder(start,goal,path_track,found)
+    print(path)
+
 
     if found:
         print(f"It takes {steps} steps to find a path using A*")
