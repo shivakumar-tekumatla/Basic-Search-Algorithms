@@ -121,6 +121,57 @@ def bfs_dfs_search(grid,start,goal,search_method):
     path=shortest_path_finder(start,goal,path_track,found)
     
     return path, steps, found
+def dijkstra_astar_search(grid,start,goal,search_method):
+    graph_nodes = graph(grid)
+    
+    queue =[]
+    visited=[]
+    path = []
+    steps = 0
+    found = False
+    inf = sys.maxsize
+    cost_grid ={}
+    path_track = {}
+    cost =1 
+
+    for key in graph_nodes.keys():
+        cost_grid[key]=inf
+    cost_grid[tuple(start)] = 0
+    queue.append(start)
+    visited.append(start)
+    steps+=1
+    while queue and not found:
+        item = min(zip(cost_grid.values(), cost_grid.keys()))[1]  # finding the node with minimum cost 
+        # cost_grid
+        
+        queue.append(item)
+
+        if item == goal:
+            found = True
+            break 
+        if item not in visited:
+            visited.append(item)
+        for node in graph_nodes[item]:
+            if node not in visited:
+                if search_method == "dijkstra":
+                    if cost_grid[tuple(node)]> cost_grid[item]+cost :
+                        cost_grid[tuple(node)]= cost_grid[item]+cost 
+                else:
+                    if cost_grid[tuple(node)]> cost_grid[item]+heuristic(node,goal) :
+                        cost_grid[tuple(node)]= cost_grid[item]+heuristic(node,goal) 
+            
+                visited.append(node)
+                queue.append(node)
+                path_track[tuple(node)] = list(item) 
+                steps+=1
+            if node == goal:
+                found = True
+                break 
+        del cost_grid[item]
+
+
+    path=shortest_path_finder(start,goal,path_track,found)
+    return path, steps, found
 
 def bfs(grid, start, goal):
     '''Return a path found by BFS alogirhm 
@@ -217,53 +268,8 @@ def dijkstra(grid, start, goal):
     [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]
     '''
     ### YOUR CODE HERE ###
-    graph_nodes = graph(grid)
-    
-    queue =[]
-    visited=[]
-    path = []
-    steps = 0
-    found = False
-    inf = sys.maxsize
-    cost_grid ={}
-    path_track = {}
-    cost =1 
-
-    for key in graph_nodes.keys():
-        cost_grid[key]=inf
-    cost_grid[tuple(start)] = 0
-    queue.append(start)
-    visited.append(start)
-    steps+=1
-    while queue and not found:
-        item = min(zip(cost_grid.values(), cost_grid.keys()))[1]  # finding the node with minimum cost 
-        # cost_grid
-        
-        queue.append(item)
-
-        if item == goal:
-            found = True
-            break 
-        if item not in visited:
-            visited.append(item)
-        for node in graph_nodes[item]:
-            if node not in visited:
-                if cost_grid[tuple(node)]> cost_grid[item]+cost :
-                    cost_grid[tuple(node)]= cost_grid[item]+cost 
-            
-                visited.append(node)
-                queue.append(node)
-                path_track[tuple(node)] = list(item) 
-                steps+=1
-            if node == goal:
-                found = True
-                break 
-        del cost_grid[item]
-
-
-    path=shortest_path_finder(start,goal,path_track,found)
-    print(path)
-    
+    search_method = "dijkstra"
+    path,steps,found = dijkstra_astar_search(grid,start,goal,search_method)
 
     if found:
         print(f"It takes {steps} steps to find a path using Dijkstra")
@@ -296,59 +302,15 @@ def astar(grid, start, goal):
     [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]
     '''
     ### YOUR CODE HERE ###
-    graph_nodes = graph(grid)
-    
-    queue =[]
-    visited=[]
-    path = []
-    steps = 0
-    found = False
-    inf = sys.maxsize
-    cost_grid ={}
-    path_track = {}
-    cost =1 
-
-    for key in graph_nodes.keys():
-        cost_grid[key]=inf
-    cost_grid[tuple(start)] = 0
-    queue.append(start)
-    visited.append(start)
-    steps+=1
-    while queue and not found:
-        item = min(zip(cost_grid.values(), cost_grid.keys()))[1]  # finding the node with minimum cost 
-        # cost_grid
-        
-        queue.append(item)
-
-        if item == goal:
-            found = True
-            break 
-        if item not in visited:
-            visited.append(item)
-        for node in graph_nodes[item]:
-            if node not in visited:
-                if cost_grid[tuple(node)]> cost_grid[item]+cost :
-                    cost_grid[tuple(node)]= cost_grid[item]+cost 
-            
-                visited.append(node)
-                queue.append(node)
-                path_track[tuple(node)] = list(item) 
-                steps+=1
-            if node == goal:
-                found = True
-                break 
-        del cost_grid[item]
-
-
-    path=shortest_path_finder(start,goal,path_track,found)
+    search_method = "astar"
+    path,steps,found = dijkstra_astar_search(grid,start,goal,search_method)
     print(path)
-
-
     if found:
-        print(f"It takes {steps} steps to find a path using A*")
+        print(f"It takes {steps} steps to find a path using Dijkstra")
     else:
         print("No path found")
     return path, steps
+
 
 
 # Doctest
