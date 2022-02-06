@@ -26,22 +26,14 @@ def graph(grid):
         """This function checks if a corresponding element in grid is a space or an obstacle.
         returns valid nodes in the order [right,down,left,up]
         """
-        if row+1 in range(0,len(grid)) and grid[row+1][col]==0:
-            down = [row+1,col]
-        else:
-            down = None 
-        if row-1 in range(0,len(grid)) and grid[row-1][col]==0:
-            up = [row-1,col]
-        else:
-            up = None 
-        if col+1 in range(0,len(grid[row])) and grid[row][col+1]==0:
-            right = [row,col+1]
-        else:
-            right = None 
-        if col-1 in range(0,len(grid[row])) and grid[row][col-1]==0:
-            left = [row,col-1]
-        else:
-            left = None 
+        if row+1 in range(0,len(grid)) and grid[row+1][col]==0:down = [row+1,col]
+        else:down = None 
+        if row-1 in range(0,len(grid)) and grid[row-1][col]==0:up = [row-1,col]
+        else:up = None 
+        if col+1 in range(0,len(grid[row])) and grid[row][col+1]==0:right = [row,col+1]
+        else:right = None 
+        if col-1 in range(0,len(grid[row])) and grid[row][col-1]==0:left = [row,col-1]
+        else:left = None 
         out  = [right,down,left,up]
         return [i for i in out if i is not None ]
     nodes ={}
@@ -53,6 +45,8 @@ def graph(grid):
     return nodes 
 
 def heuristic(node,goal):
+    """Manhattan Heuristic function.
+    For a given node and goal, this function return manhattan distance between them"""
     x_node,y_node = node 
     x_goal,y_goal = goal
     return abs(x_goal-x_node)+abs(y_goal-y_node)
@@ -306,7 +300,7 @@ def astar(grid, start, goal):
     path,steps,found = dijkstra_astar_search(grid,start,goal,search_method)
     print(path)
     if found:
-        print(f"It takes {steps} steps to find a path using Dijkstra")
+        print(f"It takes {steps} steps to find a path using astar")
     else:
         print("No path found")
     return path, steps
