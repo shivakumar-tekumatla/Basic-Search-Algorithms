@@ -107,7 +107,7 @@ print(dijkstra_astar_search(grid,start,goal,"astar"))
     path=shortest_path_finder(start,goal,path_track,found)"""
 
 
-    """
+"""
     def dijkstra_astar_search(grid,start,goal,search_method):
     graph_nodes = graph(grid)
     
@@ -155,7 +155,7 @@ print(dijkstra_astar_search(grid,start,goal,"astar"))
     path=shortest_path_finder(start,goal,path_track,found)
     return path, steps, found"""
 
-    """def find_min_key(queue,cost_grid,goal):
+"""def find_min_key(queue,cost_grid,goal):
     _min = sys.maxsize
     for key in queue:
         if cost_grid[tuple(key)]+ heuristic(key,goal) <_min:

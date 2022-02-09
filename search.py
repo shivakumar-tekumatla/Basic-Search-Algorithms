@@ -70,45 +70,50 @@ def shortest_path_finder(start,goal,path_track,found):
     path.reverse()
     return path
 
-# def get_parent(nodes,child):
-#     keys = [k for k, v in nodes.items() if child in v]
-#     if keys:
-#         return list(keys[0])
-#     return None
-
 def bfs_dfs_search(grid,start,goal,search_method):
     graph_nodes,queue,visited,path,steps,found,inf,cost_grid,path_track,cost = init(grid)
+
+    visited=set()
     queue.append(start)
-    visited.append(start)
-    steps+=1
+
     while queue and not found:
-        item = queue.pop(0)    # Dequeuing the first element in the queue
-        idx=0
-        prev_node = item
-        for node in graph_nodes[tuple(item)]:
-            if node not in visited:
-                visited.append(node)
-                if search_method=="bfs":
+        if search_method =="bfs":
+            item = queue.pop(0)    # Dequeuing the first element in the queue
+            for node in graph_nodes[tuple(item)]:
+                if tuple(node) not in visited:
+                    visited.add(tuple(node))
                     queue.append(node)
                     path_track[tuple(node)] = item 
-                else:
+                    if node == goal:
+                        found = True
+                        break
+            
+        else:
+            item = queue.pop()
+            idx =-1
+            if tuple(item) not in visited:
+                visited.add(tuple(item))
+                for node in graph_nodes[tuple(item)]:
                     queue.insert(idx,node)
-                    # print(node,item)
-                    path_track[tuple(node)] = item
-                    prev_node=node
-                    idx+=1
-                 # Keeping track of the parents of each node 
-                steps+=1
-                if node == goal:
-                    found = True
-                    break
+                    if tuple(node) in path_track.keys():
+
+                        path_track[tuple(item)] = node 
+                    else:
+                        path_track[tuple(node)] = item 
+                    idx-=1
+                    if node == goal:
+                        found = True
+                        break
+            
+
     path=shortest_path_finder(start,goal,path_track,found)
-    
+    steps = len(visited)
     return path, steps, found
 def dijkstra_astar_search(grid,start,goal,search_method):
     """This is a common function for dijkstra and A* . The both search methods are almost same.
     We need use heuristic for A*."""
     graph_nodes,queue,visited,path,steps,found,inf,cost_grid,path_track,cost = init(grid)
+    # visited = set()
     for key in graph_nodes.keys():
         cost_grid[key]=inf 
 
@@ -146,6 +151,7 @@ def dijkstra_astar_search(grid,start,goal,search_method):
                 if node == goal:
                     found = True
                     break 
+
     path=shortest_path_finder(start,goal,path_track,found)
     return path, steps, found
 
@@ -211,8 +217,6 @@ def dfs(grid, start, goal):
     
     search_method = "dfs"
     path,steps,found = bfs_dfs_search(grid,start,goal,search_method)
-    # print(path)
-    
     if found:
         print(f"It takes {steps} steps to find a path using DFS")
     else:
