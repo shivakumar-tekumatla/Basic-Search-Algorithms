@@ -1,17 +1,21 @@
 # Basic searching algorithms
 
 import sys
-
 from matplotlib.cbook import violin_stats 
-class Node:
-    def __init__(self, row, col, is_obs, h):
-        self.row = row        # coordinate
-        self.col = col        # coordinate
-        self.is_obs = is_obs  # obstacle?
-        self.g = None         # cost to come (previous g + moving cost)
-        self.h = h            # heuristic
-        self.cost = None      # total cost (depend on the algorithm)
-        self.parent = None    # previous node
+
+def init(grid):
+    """This function intializes all the required variables"""
+    graph_nodes = graph(grid)
+    queue =[]
+    visited=[]
+    path = []
+    steps = 0
+    found = False
+    inf = sys.maxsize
+    cost_grid ={}
+    path_track = {}
+    cost =1 
+    return graph_nodes,queue,visited,path,steps,found,inf,cost_grid,path_track,cost
 
 def graph(grid):
     """
@@ -73,26 +77,12 @@ def shortest_path_finder(start,goal,path_track,found):
 #     return None
 
 def bfs_dfs_search(grid,start,goal,search_method):
-    graph_nodes = graph(grid)
-    
-    queue =[]
-    visited=[]
-    path = []
-    path_track={}  # Dictionary to keep track of the path so the optimal path can be constructed later 
-    steps = 0
-    found = False
-
+    graph_nodes,queue,visited,path,steps,found,inf,cost_grid,path_track,cost = init(grid)
     queue.append(start)
     visited.append(start)
     steps+=1
     while queue and not found:
         item = queue.pop(0)    # Dequeuing the first element in the queue
-   
-        if item == goal:
-            found = True
-            break 
-        if item not in visited:
-            visited.append(item)
         idx=0
         prev_node = item
         for node in graph_nodes[tuple(item)]:
@@ -103,7 +93,8 @@ def bfs_dfs_search(grid,start,goal,search_method):
                     path_track[tuple(node)] = item 
                 else:
                     queue.insert(idx,node)
-                    path_track[tuple(node)] = prev_node
+                    # print(node,item)
+                    path_track[tuple(node)] = item
                     prev_node=node
                     idx+=1
                  # Keeping track of the parents of each node 
@@ -111,59 +102,50 @@ def bfs_dfs_search(grid,start,goal,search_method):
                 if node == goal:
                     found = True
                     break
-    print(path_track)
     path=shortest_path_finder(start,goal,path_track,found)
     
     return path, steps, found
 def dijkstra_astar_search(grid,start,goal,search_method):
-    graph_nodes = graph(grid)
-    
-    queue =[]
-    visited=[]
-    path = []
-    steps = 0
-    found = False
-    inf = sys.maxsize
-    cost_grid ={}
-    path_track = {}
-    cost =1 
-
+    """This is a common function for dijkstra and A* . The both search methods are almost same.
+    We need use heuristic for A*."""
+    graph_nodes,queue,visited,path,steps,found,inf,cost_grid,path_track,cost = init(grid)
     for key in graph_nodes.keys():
-        cost_grid[key]=inf
-    cost_grid[tuple(start)] = 0
-    queue.append(start)
-    visited.append(start)
-    steps+=1
-    while queue and not found:
-        item = min(zip(cost_grid.values(), cost_grid.keys()))[1]  # finding the node with minimum cost 
-        # cost_grid
-        
-        queue.append(item)
+        cost_grid[key]=inf 
 
-        if item == goal:
-            found = True
-            break 
-        if item not in visited:
-            visited.append(item)
+    cost_grid[tuple(start)] = 0
+    visited.append(start)
+    queue.append(start)
+    steps+=1
+    step_flag = False
+    while queue and not found:
+        _min = inf
+        for key in queue:
+            if search_method == "astar":
+                step_flag = True
+                if cost_grid[tuple(key)]+ heuristic(key,goal) <_min:
+                    _min = cost_grid[tuple(key)]+ heuristic(key,goal)
+                    min_key = key
+            elif search_method=="dijkstra":
+                if cost_grid[tuple(key)] <_min:
+                    _min = cost_grid[tuple(key)]
+                    min_key = key 
+        item= tuple(min_key)
+        queue.remove(list(item))
+        if step_flag:
+            steps+=1
         for node in graph_nodes[item]:
             if node not in visited:
-                if search_method == "dijkstra":
-                    if cost_grid[tuple(node)]> cost_grid[item]+cost :
-                        cost_grid[tuple(node)]= cost_grid[item]+cost 
-                else:
-                    if cost_grid[tuple(node)]> cost_grid[item]+heuristic(node,goal) :
-                        cost_grid[tuple(node)]= cost_grid[item]+heuristic(node,goal) 
-            
+                if cost_grid[tuple(node)]> cost_grid[item]+cost :
+                    cost_grid[tuple(node)]= cost_grid[item]+cost 
+
                 visited.append(node)
                 queue.append(node)
-                path_track[tuple(node)] = list(item) 
-                steps+=1
-            if node == goal:
-                found = True
-                break 
-        del cost_grid[item]
-
-
+                path_track[tuple(node)] = list(item) ## Keeping track of the parent 
+                if not step_flag:
+                    steps+=1
+                if node == goal:
+                    found = True
+                    break 
     path=shortest_path_finder(start,goal,path_track,found)
     return path, steps, found
 
@@ -194,7 +176,7 @@ def bfs(grid, start, goal):
     
     search_method = "bfs"
     path,steps,found = bfs_dfs_search(grid,start,goal,search_method)
-    print(path)
+    # print(path)
     if found:
         print(f"It takes {steps} steps to find a path using BFS")
     else:
@@ -229,7 +211,7 @@ def dfs(grid, start, goal):
     
     search_method = "dfs"
     path,steps,found = bfs_dfs_search(grid,start,goal,search_method)
-    print(path)
+    # print(path)
     
     if found:
         print(f"It takes {steps} steps to find a path using DFS")
@@ -298,13 +280,11 @@ def astar(grid, start, goal):
     ### YOUR CODE HERE ###
     search_method = "astar"
     path,steps,found = dijkstra_astar_search(grid,start,goal,search_method)
-    print(path)
     if found:
-        print(f"It takes {steps} steps to find a path using astar")
+        print(f"It takes {steps} steps to find a path using A*")
     else:
         print("No path found")
     return path, steps
-
 
 
 # Doctest
