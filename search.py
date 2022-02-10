@@ -56,8 +56,8 @@ def heuristic(node,goal):
     return abs(x_goal-x_node)+abs(y_goal-y_node)
 
 
-def shortest_path_finder(start,goal,path_track,found):
-    """This function returns the shortest path in the explored nodes"""
+def path_constructer(start,goal,path_track,found):
+    """This function constructs the explored nodes"""
     path=[]
     path.append(goal)
     node=goal
@@ -72,12 +72,10 @@ def shortest_path_finder(start,goal,path_track,found):
 
 def bfs_dfs_search(grid,start,goal,search_method):
     graph_nodes,queue,visited,path,steps,found,inf,cost_grid,path_track,cost = init(grid)
-
     visited=set()
     queue.append(start)
-
     while queue and not found:
-        if search_method =="bfs":
+        if search_method =="BFS":
             item = queue.pop(0)    # Dequeuing the first element in the queue
             for node in graph_nodes[tuple(item)]:
                 if tuple(node) not in visited:
@@ -87,8 +85,7 @@ def bfs_dfs_search(grid,start,goal,search_method):
                     if node == goal:
                         found = True
                         break
-            
-        else:
+        elif search_method =="DFS":
             item = queue.pop()
             idx =-1
             if tuple(item) not in visited:
@@ -96,17 +93,14 @@ def bfs_dfs_search(grid,start,goal,search_method):
                 for node in graph_nodes[tuple(item)]:
                     queue.insert(idx,node)
                     if tuple(node) in path_track.keys():
-
                         path_track[tuple(item)] = node 
                     else:
                         path_track[tuple(node)] = item 
                     idx-=1
                     if node == goal:
                         found = True
-                        break
-            
-
-    path=shortest_path_finder(start,goal,path_track,found)
+                        break                     
+    path=path_constructer(start,goal,path_track,found)
     steps = len(visited)
     return path, steps, found
 def dijkstra_astar_search(grid,start,goal,search_method):
@@ -125,12 +119,12 @@ def dijkstra_astar_search(grid,start,goal,search_method):
     while queue and not found:
         _min = inf
         for key in queue:
-            if search_method == "astar":
+            if search_method == "A*":
                 step_flag = True
                 if cost_grid[tuple(key)]+ heuristic(key,goal) <_min:
                     _min = cost_grid[tuple(key)]+ heuristic(key,goal)
                     min_key = key
-            elif search_method=="dijkstra":
+            elif search_method=="Dijkstra":
                 if cost_grid[tuple(key)] <_min:
                     _min = cost_grid[tuple(key)]
                     min_key = key 
@@ -152,7 +146,7 @@ def dijkstra_astar_search(grid,start,goal,search_method):
                     found = True
                     break 
 
-    path=shortest_path_finder(start,goal,path_track,found)
+    path=path_constructer(start,goal,path_track,found)
     return path, steps, found
 
 def bfs(grid, start, goal):
@@ -180,7 +174,7 @@ def bfs(grid, start, goal):
     '''
     ### YOUR CODE HERE ###
     
-    search_method = "bfs"
+    search_method = "BFS"
     path,steps,found = bfs_dfs_search(grid,start,goal,search_method)
     # print(path)
     if found:
@@ -215,7 +209,7 @@ def dfs(grid, start, goal):
     '''
     ### YOUR CODE HERE ###
     
-    search_method = "dfs"
+    search_method = "DFS"
     path,steps,found = bfs_dfs_search(grid,start,goal,search_method)
     if found:
         print(f"It takes {steps} steps to find a path using DFS")
@@ -248,7 +242,7 @@ def dijkstra(grid, start, goal):
     [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]
     '''
     ### YOUR CODE HERE ###
-    search_method = "dijkstra"
+    search_method = "Dijkstra"
     path,steps,found = dijkstra_astar_search(grid,start,goal,search_method)
 
     if found:
@@ -282,7 +276,7 @@ def astar(grid, start, goal):
     [[0, 0], [1, 0], [2, 0], [3, 0], [3, 1]]
     '''
     ### YOUR CODE HERE ###
-    search_method = "astar"
+    search_method = "A*"
     path,steps,found = dijkstra_astar_search(grid,start,goal,search_method)
     if found:
         print(f"It takes {steps} steps to find a path using A*")

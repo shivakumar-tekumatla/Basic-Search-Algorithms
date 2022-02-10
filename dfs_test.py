@@ -2,11 +2,11 @@ import csv
 # from importlib.resources import path
 
 from matplotlib.pyplot import get 
-from search import graph,shortest_path_finder 
+from search import graph,path_constructer 
 
 from main import load_map
 
-grid, start, goal = load_map('test_map.csv')
+grid, start, goal = load_map('map.csv')
 
 graph_nodes = graph(grid)
 
@@ -37,7 +37,7 @@ path_track = {}
 #                 found = True
 #                 break
 # print(steps)
-# path=shortest_path_finder(start,goal,path_track,found)
+# path=path_constructer(start,goal,path_track,found)
 # print(path)
 # print(visited)
 search_method = "dfs"
@@ -56,6 +56,7 @@ while queue and not found:
         for node in graph_nodes[tuple(item)]:
             print(item,node)
             queue.insert(idx,node)
+            print(item,node)
             if tuple(node) in path_track.keys():
 
                 path_track[tuple(item)] = node 
@@ -68,10 +69,10 @@ while queue and not found:
                 break
 print(len(visited))
 # print(path_track)
-for key in path_track:
-    print(key,path_track[key])
-print(path_track[(3,3)])
-path=shortest_path_finder(start,goal,path_track,found)
+# for key in path_track:
+#     print(key,path_track[key])
+# print(path_track[(3,3)])
+path=path_constructer(start,goal,path_track,found)
 print(path)
 # print("*"*100)
 # queue =[]
